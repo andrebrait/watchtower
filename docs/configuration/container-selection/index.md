@@ -23,7 +23,7 @@ Environment Variable: WATCHTOWER_REVIVE_STOPPED
 ```
 
 !!! Note
-    Requires `--include-stopped`.
+    Requires `--include-stopped`. Watchtower exits with an error when this option is on without it.
 
 ## Include Restarting Containers
 

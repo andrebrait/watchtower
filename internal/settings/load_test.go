@@ -113,6 +113,19 @@ func TestLoad_RollingRestartWithMonitorOnly(t *testing.T) {
 	require.ErrorIs(t, err, errRollingRestartWithMonitorOnly)
 }
 
+func TestLoad_ReviveStoppedRequiresIncludeStopped(t *testing.T) {
+	cmd := newParsedCommand(t, "--revive-stopped")
+
+	_, _, err := Load(newNopLogger(), cmd, nil)
+	require.ErrorIs(t, err, errReviveStoppedWithoutIncludeStopped)
+
+	cmd = newParsedCommand(t, "--revive-stopped", "--include-stopped")
+
+	cfg, _, err := Load(newNopLogger(), cmd, nil)
+	require.NoError(t, err)
+	assert.True(t, cfg.Client.ReviveStopped)
+}
+
 func TestLoad_MonitorOnlyWithNoPullSucceeds(t *testing.T) {
 	cmd := newParsedCommand(t, "--monitor-only", "--no-pull")
 

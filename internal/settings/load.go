@@ -59,6 +59,11 @@ var (
 	errRollingRestartWithMonitorOnly = errors.New(
 		"rolling-restart and monitor-only cannot both be enabled",
 	)
+	// errReviveStoppedWithoutIncludeStopped indicates revive-stopped without the
+	// include-stopped flag that lists the stopped containers it would start.
+	errReviveStoppedWithoutIncludeStopped = errors.New(
+		"revive-stopped requires include-stopped",
+	)
 	// errDiskSpaceMaxPercent indicates disk-space-max was given as a percentage.
 	errDiskSpaceMaxPercent = errors.New("disk-space-max cannot be a percentage")
 	// errDiskSpacePercentWithoutMax indicates a percentage warn value without disk-space-max.
@@ -806,6 +811,10 @@ func readOptionalFile(path string) ([]byte, error) {
 func validate(log *zerolog.Logger, cfg Config) error {
 	if cfg.Update.RollingRestart && cfg.Update.MonitorOnly {
 		return errRollingRestartWithMonitorOnly
+	}
+
+	if cfg.Client.ReviveStopped && !cfg.Client.IncludeStopped {
+		return errReviveStoppedWithoutIncludeStopped
 	}
 
 	if cfg.Update.MonitorOnly && cfg.Update.NoPull {
